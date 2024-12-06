@@ -1,20 +1,15 @@
-# Helpdesk
-
-**TODO: Add description**
-
-## Installation
-
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `helpdesk` to your list of dependencies in `mix.exs`:
+`Helpdesk.Support.Ticket` has 2 update actions both extracted from discussions in discord.
 
 ```elixir
-def deps do
-  [
-    {:helpdesk, "~> 0.1.0"}
-  ]
+update :recalculate_relationships do
+  change atomic_update(:ancestor_ids, {:atomic, expr(expensive_ancestors.id)})
+end
+
+update :recalculate_relationships_alt do
+  change atomic_update(:ancestor_ids, {:atomic, expr(list(expensive_ancestors, field: :id))})
 end
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/helpdesk>.
+Both those actions are based on `expensive_ancestors` relationship which does recursive postgres query.
+
+There are 2 test cases in `test/ancestors_error_test.exs` trigering both of them and getting different errors.
